@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Poppins", sans-serif;
+            background: linear-gradient(135deg, #1f1c2c, #928dab);
+            color: #ffffff;
+        }
+
+        .container {
+            width: 320px;
+            text-align: center;
+        }
+
+        /* Search Box */
+        .search-box {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .search-box input {
+            padding: 10px;
+            border: none;
+            outline: none;
+            border-radius: 20px 0 0 20px;
+            width: 180px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+
+        .search-box button {
+            padding: 10px 15px;
+            border: none;
+            outline: none;
+            background: #764ba2;
+            color: white;
+            border-radius: 0 20px 20px 0;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+
+        .search-box button:hover {
+            background: #5b3780;
+        }
+
+        /* Weather Card */
+        .card {
+            background: rgba(30, 30, 60, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            height: 400px;
+        }
+
+        .card h2 {
+            font-size: 1.4rem;
+            margin: 10px 0;
+        }
+
+        .card h6 {
+            font-size: 1rem;
+            text-transform: capitalize;
+            margin: 5px 0;
+            color: #e0e0e0;
+        }
+
+        .card h4 {
+            font-size: 2.8rem;
+            margin: 15px 0;
+            font-weight: 500;
+            color: #ffffff;
+        }
+
+        img#icon {
+            width: 80px;
+            height: 80px;
+            margin: 15px 0;
+        }
+
+        /* Reload Button */
+        button.refresh {
+            display: block;
+            margin: 20px auto 0;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 1.6rem;
+            cursor: pointer;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3),
+                        -5px -5px 15px rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        button.refresh:hover {
+            transform: scale(1.1);
+            background: linear-gradient(145deg, #764ba2, #667eea);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Search Input -->
+        <div class="search-box">
+            <input type="text" id="cityInput" placeholder="Enter city name">
+            <button onclick="getWeather()"><i class="fa fa-search"></i></button>
+        </div>
+
+        <!-- Weather Card -->
+        <div class="card">
+            <h2><i class="fa fa-map-marker"></i> <span id="location"></span></h2>
+            <h6 id="weather"></h6>
+            <h4><span id="temp"></span><sup>°</sup>C</h4>
+            <img src="" id="icon">
+            <button onclick="window.location.reload()" class="refresh"><i class="fa fa-refresh"></i></button>
+        </div>
+    </div>
+
+    <script>
+        function getWeather() {
+            const city = document.getElementById('cityInput').value || "Mumbai";
+            const apiKey = "7eab817d912539a1077384e0bdc13b54";
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(obj => {
+                    if (obj.cod === 200) {
+                        document.getElementById('weather').innerHTML = obj.weather[0].description;
+                        document.getElementById('location').innerHTML = obj.name;
+                        document.getElementById('temp').innerHTML = (obj.main.temp - 273.15).toFixed(1);
+                        document.getElementById('icon').src = `https://openweathermap.org/img/w/${obj.weather[0].icon}.png`;
+                    } else {
+                        alert("City not found!");
+                    }
+                })
+                .catch(error => console.log("Error: ", error));
+        }
+
+        // Load default city weather (Mumbai) on page load
+        window.onload = getWeather;
+    </script>
+</body>
+</html>
